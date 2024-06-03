@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username String    @unique
+  name      String?
+
+  password  String   @default("")
+
+  devices   Devices[]
+
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Devices {
+  id        Int      @id @default(autoincrement())
+  name      String
+
+  owner     User?    @relation(fields: [ownerId], references: [id])
+  ownerId   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  details   DeviceDetails?
+}
+
+model Categories {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+
+  devices   DeviceDetails[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DeviceDetails {
+  id        Int      @id @default(autoincrement())
+  producer  String @default("")
+  description String @default("")
+  specification String @default("")
+  dateOfPurchase DateTime @default(now())
+  purchasePrice Float @default(0)
+  expectedLifeTime Int @default(0)
+
+  Category  Categories? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+
+  device    Devices? @relation(fields: [deviceId], references: [id])
+  deviceId  Int? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
