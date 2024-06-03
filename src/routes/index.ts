@@ -1,9 +1,8 @@
 import { Router } from "express";
+import UserRoute from "./user/user";
 
 const Route = Router();
 
-Route.get("/", (req, res) => {
-  res.send("Hello World");
-});
+Route.use("/users", UserRoute);
 
 export default Route;
