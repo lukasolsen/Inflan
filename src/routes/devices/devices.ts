@@ -14,7 +14,7 @@ const DeviceRoute = Router();
 
 DeviceRoute.get("/", async (req, res) => {
   const devices = await fetchDevices({
-    limit: Number(req.query.limit) || 10,
+    limit: Number(req.query.limit) || 1000,
     offset: Number(req.query.offset) || 0,
   });
 
