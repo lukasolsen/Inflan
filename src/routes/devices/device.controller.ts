@@ -12,6 +12,7 @@ export const fetchDevices = async (options: {
   return prisma.deviceDetails.findMany({
     include: {
       device: true,
+      Category: true,
     },
     skip: options.offset,
     take: options.limit,
@@ -36,6 +37,7 @@ export const fetchDeviceById = async (id: number) => {
           owner: true,
         },
       },
+      Category: true,
     },
     where: {
       id,
@@ -43,12 +45,37 @@ export const fetchDeviceById = async (id: number) => {
   });
 };
 
-export const editDevice = async (id: number, data: DeviceDetails) => {
-  return prisma.deviceDetails.update({
+type DeviceData = {
+  dateOfPurchase: Date;
+  expectedLifeTime: number;
+  producer: string;
+  purchasePrice: number;
+  specification: string;
+  name: string;
+};
+
+export const editDevice = async (id: number, data: DeviceData) => {
+  await prisma.deviceDetails.update({
     where: {
       id,
     },
-    data,
+    data: {
+      description: data.name,
+      dateOfPurchase: data.dateOfPurchase,
+      expectedLifeTime: data.expectedLifeTime,
+      producer: data.producer,
+      purchasePrice: data.purchasePrice,
+      specification: data.specification,
+
+      device: {
+        update: {
+          name: data.name,
+        },
+      },
+    },
+    include: {
+      device: true,
+    },
   });
 };
 
