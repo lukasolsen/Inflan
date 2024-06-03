@@ -6,7 +6,13 @@ import {
   fetchUserByUsername,
   fetchUsers,
 } from "./user.controller";
-import { comparePassword, generateJWT, sanitizeUser } from "../../lib/security";
+import {
+  comparePassword,
+  generateJWT,
+  hashPassword,
+  sanitizeUser,
+  verifyEmail,
+} from "../../lib/security";
 import { Role } from "@prisma/client";
 
 const UserRoute = Router();
@@ -35,10 +41,39 @@ UserRoute.get("/:id", async (req, res) => {
   res.json(sanitizeUser(user));
 });
 
-UserRoute.post("/", async (req, res) => {
+UserRoute.post("/register", async (req, res) => {
   const { email, password, username, name } = req.body;
 
-  const user = await createUser(email, password, username, name, Role.USER);
+  if (!email || !password || !username || !name) {
+    return res
+      .status(400)
+      .send("Email, password, username, and name are required");
+  }
+
+  if (!verifyEmail(email)) {
+    return res.status(400).send("Invalid email");
+  }
+
+  const existingUser = await fetchUserByEmail(email);
+
+  if (existingUser) {
+    return res.status(400).send("User already exists");
+  }
+
+  const existingUsername = await fetchUserByUsername(username);
+  if (existingUsername) {
+    return res.status(400).send("Username already exists");
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  const user = await createUser(
+    email,
+    hashedPassword,
+    username,
+    name,
+    Role.USER
+  );
 
   res.json(sanitizeUser(user));
 });
