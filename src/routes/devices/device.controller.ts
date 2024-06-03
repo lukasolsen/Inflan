@@ -23,8 +23,13 @@ export const fetchDevices = async (options: {
  * @param id
  * @returns {Promise<Device | null>} - Device object or null
  */
-export const fetchDeviceById = async (id: number): Promise<Devices | null> => {
-  return prisma.devices.findUnique({
+export const fetchDeviceById = async (
+  id: number
+): Promise<DeviceDetails | null> => {
+  return prisma.deviceDetails.findUnique({
+    include: {
+      device: true,
+    },
     where: {
       id,
     },
