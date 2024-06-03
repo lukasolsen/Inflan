@@ -7,6 +7,7 @@ dotenv.config();
 
 import Route from "./routes/index";
 import { User } from "@prisma/client";
+import { userMiddleware } from "./middleware/userMiddleware";
 
 const app: Application = express();
 
@@ -32,6 +33,8 @@ app.use(
     crossOriginOpenerPolicy: false,
   })
 );
+
+app.use(userMiddleware);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

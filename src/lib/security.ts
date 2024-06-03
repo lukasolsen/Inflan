@@ -26,7 +26,9 @@ export const generateJWT = async (id: number) => {
 };
 
 export const sanitizeUser = (user: User) => {
-  const { id, password, ...sanitizedUser } = user;
+  if (!user) return null;
+
+  const { password, ...sanitizedUser } = user;
 
   return sanitizedUser;
 };

@@ -48,3 +48,21 @@ export const createUser = async (
     },
   });
 };
+
+export const fetchUserByEmail = async (email: string): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+};
+
+export const fetchUserByUsername = async (
+  username: string
+): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+};
