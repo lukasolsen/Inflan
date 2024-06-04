@@ -1,5 +1,4 @@
 import prisma from "../../data-source";
-import { DeviceDetails, Devices } from "@prisma/client";
 
 /**
  * Fetch all devices

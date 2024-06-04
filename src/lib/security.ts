@@ -28,6 +28,7 @@ export const generateJWT = async (id: number) => {
 export const sanitizeUser = (user: User) => {
   if (!user) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password, ...sanitizedUser } = user;
 
   return sanitizedUser;

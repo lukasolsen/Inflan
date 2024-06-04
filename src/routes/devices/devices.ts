@@ -8,7 +8,6 @@ import {
 } from "./device.controller";
 import { sanitizeUser } from "../../lib/security";
 import { User } from "@prisma/client";
-import { DeviceDetails } from "@prisma/client";
 
 const DeviceRoute = Router();
 
