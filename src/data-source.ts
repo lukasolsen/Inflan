@@ -48,7 +48,8 @@ async function createDevices() {
 
     // Make the categories if they do not exist.
     await Promise.all(
-      devicesData.map(async (device) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      devicesData.map(async (device: { Kategori: any }) => {
         const category = await prisma.categories.findUnique({
           where: {
             name: device.Kategori,
@@ -67,38 +68,53 @@ async function createDevices() {
 
     // Create the devices and device details.
     await Promise.all(
-      devicesData.map(async (device) => {
-        const category = await prisma.categories.findUnique({
-          where: {
-            name: device.Kategori,
-          },
-        });
-
-        const dev = await prisma.devices.create({
-          data: {
-            name: device.Beskrivelse,
-          },
-        });
-
-        if (dev) {
-          const dateOfPurchase = new Date(device["Innkjøpsdato"]).toISOString();
-
-          await prisma.deviceDetails.create({
-            data: {
-              deviceId: dev.id,
-              categoryId: category?.id || 1,
-              description: device.Beskrivelse,
-              dateOfPurchase: dateOfPurchase,
-              expectedLifeTime: device["Forventet levetid (i år)"],
-              producer: device.Produsent,
-              purchasePrice: device["Innkjøpspris"],
-              specification: device.Spesifikasjoner,
+      devicesData.map(
+        async (device: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          [x: string]: any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          Kategori: any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          Beskrivelse: any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          Produsent: any;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          Spesifikasjoner: any;
+        }) => {
+          const category = await prisma.categories.findUnique({
+            where: {
+              name: device.Kategori,
             },
           });
 
-          consola.success("Device created successfully", dev);
+          const dev = await prisma.devices.create({
+            data: {
+              name: device.Beskrivelse,
+            },
+          });
+
+          if (dev) {
+            const dateOfPurchase = new Date(
+              device["Innkjøpsdato"]
+            ).toISOString();
+
+            await prisma.deviceDetails.create({
+              data: {
+                deviceId: dev.id,
+                categoryId: category?.id || 1,
+                description: device.Beskrivelse,
+                dateOfPurchase: dateOfPurchase,
+                expectedLifeTime: device["Forventet levetid (i år)"],
+                producer: device.Produsent,
+                purchasePrice: device["Innkjøpspris"],
+                specification: device.Spesifikasjoner,
+              },
+            });
+
+            consola.success("Device created successfully", dev);
+          }
         }
-      })
+      )
     );
   }
 }
