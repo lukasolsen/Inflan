@@ -94,6 +94,7 @@ DeviceRoute.post("/", async (req, res) => {
     "dateOfPurchase",
     "purchasePrice",
     "expectedLifeTime",
+    "category",
   ];
 
   const keys = Object.keys(req.body);
@@ -104,20 +105,17 @@ DeviceRoute.post("/", async (req, res) => {
     return res.status(400).send("Invalid parameters");
   }
 
-  const device = await fetchDeviceById(Number(req.body.id));
-
-  if (device) {
-    return res.status(400).send("Device already exists");
-  }
-
-  const newDevice = await createDevice({
-    specification: req.body.specification,
-    name: req.body.name,
-    producer: req.body.producer,
-    dateOfPurchase: req.body.dateOfPurchase,
-    purchasePrice: req.body.purchasePrice,
-    expectedLifeTime: req.body.expectedLifeTime,
-  });
+  const newDevice = await createDevice(
+    {
+      specification: req.body.specification,
+      name: req.body.name,
+      producer: req.body.producer,
+      dateOfPurchase: new Date(req.body.dateOfPurchase),
+      purchasePrice: req.body.purchasePrice,
+      expectedLifeTime: req.body.expectedLifeTime,
+    },
+    req.body.category as string
+  );
 
   res.json(newDevice);
 });

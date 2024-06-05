@@ -127,7 +127,7 @@ export const removeDevice = async (id: number) => {
   });
 };
 
-export const createDevice = async (data: DeviceData) => {
+export const createDevice = async (data: DeviceData, category: string) => {
   return prisma.deviceDetails.create({
     data: {
       description: data.name,
@@ -141,9 +141,20 @@ export const createDevice = async (data: DeviceData) => {
           name: data.name,
         },
       },
+      Category: {
+        connectOrCreate: {
+          where: {
+            name: category,
+          },
+          create: {
+            name: category,
+          },
+        },
+      },
     },
     include: {
       device: true,
+      Category: true,
     },
   });
 };
