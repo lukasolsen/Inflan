@@ -118,3 +118,32 @@ export const rentDevice = async (id: number, userId: number) => {
     },
   });
 };
+
+export const removeDevice = async (id: number) => {
+  return prisma.deviceDetails.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+export const createDevice = async (data: DeviceData) => {
+  return prisma.deviceDetails.create({
+    data: {
+      description: data.name,
+      dateOfPurchase: data.dateOfPurchase,
+      expectedLifeTime: data.expectedLifeTime,
+      producer: data.producer,
+      purchasePrice: data.purchasePrice,
+      specification: data.specification,
+      device: {
+        create: {
+          name: data.name,
+        },
+      },
+    },
+    include: {
+      device: true,
+    },
+  });
+};
